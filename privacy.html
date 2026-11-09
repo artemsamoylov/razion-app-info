@@ -8,7 +8,7 @@
 <h2>Data we process</h2>
 
 <h3>Account and device</h3>
-<p>When your account is created, the app sends the service a hashed device identifier derived from a random ID stored in your device’s Keychain. We use it to recognize your device — for example, to restore your account after reinstalling the app — and to prevent abuse. The service stores an internal numeric account ID and the creation dates of your account and device. An access token for your account is kept in your device’s secure storage.</p>
+<p>When your account is created, the app sends the service a device identifier derived from a random ID stored in your device’s Keychain; the server stores a hash of that identifier. We use it to recognize your device — for example, to restore your account after reinstalling the app — and to prevent abuse. The service stores an internal numeric account ID and the creation dates of your account and device. An access token for your account is kept in your device’s secure storage.</p>
 
 <h3>Your nutrition profile</h3>
 <p>The details you enter during onboarding and later in Profile: age, sex, height, current weight, activity level, goal, diet type, allergies and intolerances, foods and cuisines you like or dislike, meal count and other preferences. Based on these, the service calculates your calorie and macronutrient targets, and stores your coach choice and language.</p>
@@ -17,13 +17,16 @@
 <p>The entries you log — date and time, meal type, items, brands, portion sizes, nutrition estimates, and the text or voice transcript they came from; the meal plans you generate or import, including recipes and shopping lists; plan check-ins; and your coach conversations. You can delete individual diary entries in the app.</p>
 
 <h3>Voice recordings</h3>
-<p>When you log food or talk to your coach by voice, iOS first asks for microphone permission; you can change it anytime in iOS Settings. The recording is created on your device, and the audio file stays in the app’s cache storage until iOS reclaims the space — the app itself does not delete it. To transcribe your speech, the app sends the recording over HTTPS to our server, which passes it to OpenAI’s speech-to-text service and returns the transcript to your device. The transcript is then processed like typed text and, if it becomes a diary entry or a chat message, is stored as described above. The service keeps no permanent archive of voice recordings: during processing, the upload may be temporarily written to the server’s disk, and it is removed once the request completes.</p>
+<p>When you log food or talk to your coach by voice, iOS first asks for microphone permission; you can change it anytime in iOS Settings. The recording is created on your device, and the audio file stays in the app’s cache storage until iOS reclaims the space — the app itself does not delete it. To transcribe your speech, the app sends the recording over HTTPS to our server, which passes it to OpenAI’s speech-to-text service and returns the transcript to your device. The transcript is then processed like typed text and, if it becomes a diary entry or a chat message, is stored as described above. The service keeps no permanent archive of voice recordings: during processing, the upload may be temporarily written to the server’s disk, and the temporary upload is closed during normal request cleanup. This is not a guarantee of immediate erasure of every temporary copy.</p>
 
 <h3>Subscriptions and purchases</h3>
-<p>Razion Plus subscriptions are auto-renewing in-app purchases processed by Apple; we never see your card details. Through RevenueCat, our subscription infrastructure provider, the service receives your subscription status — plan, expiry and auto-renewal state — linked to a random customer identifier generated for your account. Your Apple ID, name and payment information are not shared with us.</p>
+<p>Razion Plus subscriptions are auto-renewing in-app purchases processed by Apple; we never see your card details. Through RevenueCat, our subscription infrastructure provider, the service receives your subscription status — plan, expiry and auto-renewal state — linked to a random customer identifier generated for your account. The app does not ask you to enter payment card details.</p>
 
 <h3>Technical and diagnostic data</h3>
 <p>IP addresses (used in memory for rate limiting and abuse prevention; they can also appear in server access logs); server logs with the time, endpoint and status of requests; and AI diagnostics: we use Langfuse to record technical details of AI requests — the prompts sent to the AI model (which can include relevant parts of your profile, diary and chat), model outputs, errors, token counts and timing — to monitor the quality and cost of Razion’s AI features.</p>
+
+<h3>Support and service records</h3>
+<p>If you contact support, your email address and the content you choose to send are processed to handle your request. The service also stores content-moderation categories and timestamps, and records of legal consents where collected. Account-linked information and persistent identifiers are not anonymous simply because you do not provide a name.</p>
 
 <h2>How we use data</h2>
 <ul>
@@ -37,28 +40,28 @@
 <h2>AI processing and other providers</h2>
 <p>Depending on the feature, Razion sends data to:</p>
 <ul>
-<li><strong>OpenAI</strong> (provider based in the United States) — meal analysis and logging, menu generation, coach replies, voice transcription and text moderation. This can include parts of your profile (such as age, sex, height, weight, goals, allergies and food preferences), diary and menu context, your chat messages, free text you enter, and voice recordings. Under OpenAI’s published terms for its API, data submitted through the API is not used to train or improve OpenAI’s models, and only limited records are kept for abuse monitoring (up to 30 days for text features); see OpenAI’s <a href="https://developers.openai.com/api/docs/guides/your-data">data usage documentation</a>.</li>
+<li><strong>OpenAI</strong> (provider based in the United States) — meal analysis and logging, menu generation, coach replies, voice transcription and text moderation. This can include parts of your profile (such as age, sex, height, weight, goals, allergies and food preferences), diary and menu context, your chat messages, free text you enter, and voice recordings. OpenAI’s handling of API data depends on the service used and the applicable account settings and terms. See OpenAI’s <a href="https://developers.openai.com/api/docs/guides/your-data">data usage documentation</a>.</li>
 <li><strong>Langfuse Cloud</strong> (European Union, Ireland) — the AI diagnostics described above. We have not set an automatic deletion period for these traces; they are kept until we delete them. See Langfuse’s <a href="https://langfuse.com/privacy">privacy policy</a>.</li>
 <li><strong>RevenueCat</strong> — subscription management. It receives a random customer identifier and your App Store subscription information, used to provide subscription functionality and related analytics; see RevenueCat’s <a href="https://www.revenuecat.com/privacy">privacy policy</a>.</li>
 <li><strong>Apple</strong> — processes your purchases and subscription payments through your Apple ID; see Apple’s <a href="https://www.apple.com/legal/privacy/en-ww/">privacy policy</a>.</li>
-<li><strong>Public web search.</strong> To estimate nutrition for specific products, meals or restaurants, the service may query public search engines with the food name, brand or venue and the search wording, which can include words from your free-text input. Search engines see our server’s address, not your account.</li>
-<li><strong>Hosting.</strong> Our servers run on a virtual private server in the Netherlands operated by VDSina (vdsina.com).</li>
+<li><strong>Public web search.</strong> To estimate nutrition for specific products, meals or restaurants, the service may query public search engines with the food name, brand or venue and the search wording, which can include words from your free-text input. Search engines receive queries from our server’s IP address. We do not intentionally attach your Razion account ID to search queries, but the query text itself can contain personal information.</li>
+<li><strong>Hosting.</strong> Our backend, database, temporary uploads, logs and local database backups run on a virtual private server reported by the operator to be located in the Netherlands.</li>
 </ul>
-<p>We do not sell or rent your personal data, we do not share it with advertisers, we do not track you across other companies’ apps or websites, and we do not use your content to train our own machine-learning models. Razion includes no advertising SDKs and no third-party analytics or diagnostics services beyond those listed above.</p>
+<p>The app’s reviewed data flows use the providers above for service delivery, subscription analytics, safety and AI diagnostics. This policy does not promise that information sent to a provider is excluded from every use permitted by that provider’s applicable terms and account settings.</p>
 
 <h2>How long we keep data</h2>
 <ul>
 <li>Your profile, diary, meal plans, check-ins and coach chat are kept while your account exists — until you delete individual items or your whole account. There is no automatic deletion based on inactivity.</li>
-<li>Voice recordings are processed temporarily and are not archived (see above).</li>
-<li>Server logs are rotated daily and kept for up to about 90 days.</li>
-<li>We keep a rolling set of recent database backups made around service updates, for disaster recovery. Backups are not rewritten when data or an account is deleted.</li>
+<li>The backend does not maintain a dedicated voice archive. Recordings can remain in the device cache until cleared by the operating system; transcripts can remain in diary entries, chat and AI traces.</li>
+<li>Application log rotation is configured daily with 90 rotations and a 90-day maximum-age setting. These settings do not guarantee that every log entry or infrastructure copy is erased exactly 90 days after collection.</li>
+<li>We keep the 10 most recent local database backups made around service updates. There is no fixed age limit: without new backups, older copies may remain indefinitely. Backups are not rewritten when data or an account is deleted. This local backup rule does not establish a deletion deadline for copies held by infrastructure providers.</li>
 <li>AI diagnostics in Langfuse are kept until deleted; no automatic retention period is currently set.</li>
 <li>Data held by providers (OpenAI, RevenueCat, Apple, search engines) follows those providers’ retention policies.</li>
 </ul>
 
 <h2>Deleting your account</h2>
-<p>You can delete your account in the app: Profile → Delete account. Deletion is performed immediately in a single operation: your nutrition profile, food diary, meal plans, plan check-ins, coach chat history, and your account and device records are erased, the app’s access tokens stop working, and cached data is removed from your device. The random device ID stored in your device’s Keychain remains on your device. Deleting your Razion account does not cancel an App Store subscription — cancel it separately in <a href="https://apps.apple.com/account/subscriptions">Apple subscription settings</a>.</p>
-<p>Some records are retained after deletion: hashed device identifiers used for abuse prevention (for up to 3 years); records of automated content-moderation rejections (account ID, category and time only — the rejected text is not kept); your former numeric account ID (reserved so it is never reassigned); the server logs and backups described above; and data already held by the providers listed above, which follows their retention rules. If you would like us to also request deletion of your data from a provider, contact us.</p>
+<p>You can delete your account in the app: Profile → Delete account. When the deletion request succeeds, the service removes your nutrition profile, food diary, meal plans, plan check-ins, coach chat history, and account and device records from its active database in one transaction. The old access tokens stop working. The app clears its token and profile, plan, shopping-list and pending-food caches; this does not clear the audio cache or guarantee physical erasure of all storage remnants. The random device ID stored in your device’s Keychain remains on your device. Deleting your Razion account does not cancel an App Store subscription — cancel it separately in <a href="https://apps.apple.com/account/subscriptions">Apple subscription settings</a>.</p>
+<p>Some records are retained after deletion: hashed device identifiers used to prevent repeat trial claims (scheduled for cleanup after 1,095 days from the claim); any recorded legal consents (scheduled for cleanup after account deletion once the consent is more than 1,095 days old); any payment records; records of automated content-moderation rejections (account ID, category and time only — the rejected text is not kept); your former numeric account ID (reserved so it is never reassigned); the server logs and backups described above; and data already held by the providers listed above, which follows their retention rules. Account deletion does not send deletion requests to these providers. Moderation records, payment records and reserved account IDs have no automatic expiry in the service. Retained records can remain linked to your former account or device. Scheduled cleanup can be delayed if the cleanup process is unavailable. You can contact us with questions or requests about retained data.</p>
 <p>Deleted accounts cannot be restored through the app. In a disaster-recovery situation we may restore the service from backups, which can contain older data.</p>
 
 <h2>Your choices and privacy requests</h2>
@@ -66,18 +69,18 @@
 <li>In the app you can view and edit your profile and targets, delete diary entries and delete your account.</li>
 <li>Microphone access can be changed anytime in iOS Settings.</li>
 <li>Subscriptions can be managed and cancelled in Apple subscription settings.</li>
-<li>By email you can ask us to answer questions about your data, correct it, send you a copy of the personal data stored in your account, or delete it. Write to <a href="mailto:artemsamoilovdev@icloud.com">artemsamoilovdev@icloud.com</a> and include the Support ID shown on your Profile screen; we may ask for additional details to confirm the request relates to your account. We aim to respond within 30 days.</li>
+<li>For privacy questions or requests for access, a copy, correction, deletion, restriction or objection to processing, write to <a href="mailto:artemsamoilovdev@icloud.com">artemsamoilovdev@icloud.com</a> and include the Support ID shown on your Profile screen. That ID alone does not prove ownership of the account. Do not email access tokens, passwords, payment details or sensitive health information. There is currently no self-service full-data export in the app.</li>
 </ul>
-<p>Depending on where you live, you may have additional rights under local law; this section explains how to exercise them with us.</p>
+<p>Your rights depend on applicable law and may include withdrawing consent where processing relies on it and complaining to a data protection authority. This policy does not replace any rights or response deadlines that apply by law. Microphone permission controls recording on your device; it does not by itself authorize all processing by external providers.</p>
 
 <h2>Children</h2>
-<p>Razion is not directed at children. The app accepts only an age of 18 or older, which is self-reported during onboarding and not independently verified. If we learn that someone under 18 is using Razion, we will delete their account.</p>
+<p>Razion is not directed at children. The app accepts only an age of 18 or older, which is self-reported during onboarding and not independently verified. If you believe a person under 18 has provided data to Razion, please contact us.</p>
 
 <h2>Security</h2>
-<p>Data is transmitted over HTTPS. Access tokens and device identifiers are stored in your device’s Keychain. We apply reasonable technical and organizational measures to protect the service, but no internet service can guarantee perfect security.</p>
+<p>Data is transmitted over HTTPS. Access tokens and device identifiers are stored in your device’s Keychain. No internet service can guarantee perfect security.</p>
 
 <h2>Where your data is processed</h2>
-<p>Our servers are located in the Netherlands. The providers listed above may process data in their own regions — for example, OpenAI in the United States and Langfuse in the European Union (Ireland) — so your data can be processed in countries other than your own, under the safeguards described in those providers’ terms.</p>
+<p>The backend server is reported to be in the Netherlands. The configured Langfuse Cloud endpoint uses its EU region in Ireland. Other providers and their subprocessors may process data outside your country. The server location does not mean all AI, subscription, search or backup processing occurs there. Provider terms describe their processing arrangements; this policy does not guarantee a single processing country for all data.</p>
 
 <h2>Changes to this policy</h2>
 <p>We may update this Privacy Policy as the service changes. The current version is always available on this page, and the “Last updated” date at the top shows when it last changed.</p>
